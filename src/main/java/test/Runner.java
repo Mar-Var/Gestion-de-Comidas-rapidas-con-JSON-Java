@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import co.edu.uptc.presentacion.MainWindow;
 import co.edu.uptc.logica.control.Registro;
 import co.edu.uptc.logica.modelo.DateUses;
 import co.edu.uptc.logica.modelo.Producto;
@@ -16,7 +17,7 @@ public class Runner {
 	
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
-		Registro r= new Registro();
+		/*Registro r= new Registro();
 		Producto hamburguesa = new Producto("Hamburguesa",12);
 		r.agregarProducto("Hamburguesa", 12);
 	//	p.EliminarProducto("hamburguesa");
@@ -30,6 +31,12 @@ public class Runner {
 		a.add(ps);
 		System.out.println(r.agregarPedido("Pedro", "Pablo", "3224031216", "N/A","1052416590", a));
 		r.mostrarTodoslosPedidos().forEach(System.out::println);
+		
+		*/
+		
+		MainWindow myWindow= new MainWindow();
+		myWindow.begin();
+		myWindow.setVisible(true);
 	}
 
 }
