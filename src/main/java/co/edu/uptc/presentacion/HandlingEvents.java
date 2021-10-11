@@ -89,12 +89,27 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			
 			break;
 		case DELETE_DOMICILIARIO:
+			if(	mainWindow.getTxtCedula().getText().equals("")) {
+				JOptionPane.showMessageDialog(null, "Ingrese un valor en la cedula");
+				break;
+				
+			}
 			
 			r.eliminarDomiciliario(Integer.parseInt(mainWindow.getTxtCedula().getText()));
 			llenarTablaDomiciliario(mainWindow.getDftblDomiciliario(), r.mostrarTodoslosDomiciliarios());
 			actualizarComboBoxdomiciliarios(mainWindow.getCbDomiciliario(), r.mostrarTodoslosDomiciliarios());
 			break;
 		case UPDATE_DOMICILIARIO:
+			if(mainWindow.getTxtnombreDomiciliario().getText().equals("")||
+					mainWindow.getTxtApellidosDomiciliario().getText().equals("")||
+					mainWindow.getTxtCedula().getText().equals("")||
+					mainWindow.getTxtDireccion().getText().equals("")||
+					mainWindow.getTxtTelefono().getText().equals("")||
+					mainWindow.getDcFechaNacimiento().getDate()==null) {
+				JOptionPane.showMessageDialog(null, "Hay campos vacios");
+				break;
+				
+			}
 			
 			try {
 				
@@ -121,6 +136,10 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			}
 			break;
 		case ADD_PEDIDO:
+			if(mainWindow.getTxtCantidadProductos().getText().equals("")){
+				JOptionPane.showMessageDialog(null, "Ingrese una cantidad valida de producto");
+				break;
+			}
 			if(mainWindow.getDfltProductospedido().getSize()==0) {
 				ps.clear();
 			}
@@ -148,6 +167,11 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			mainWindow.getTxtPrecioProducto().setText("");
 			break;
 		case DELETE_PRODUCTO:
+			if(mainWindow.getTxtNombreProducto().getText().equals("")) {
+				JOptionPane.showMessageDialog(null, "Ingrese un nombre de producto.");
+				break;
+				
+			}
 			
 			r.eliminarProducto(mainWindow.getTxtNombreProducto().getText());
 			llenarTablasProductos(mainWindow.getDftblProductos(), r.mostrarTodoslosProductos());
