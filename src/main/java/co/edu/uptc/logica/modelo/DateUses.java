@@ -35,7 +35,7 @@ public class DateUses {
 	}
 	@Override
 	public String toString() {
-		return "DateUses [year=" + year + ", month=" + month + ", day=" + day + "]";
+		return day + "/" + month + "/" + year   ;
 	}
 	
 	

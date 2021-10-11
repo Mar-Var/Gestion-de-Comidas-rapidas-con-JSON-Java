@@ -90,10 +90,11 @@ public class ProductoPersistence {
 				.equals(nombreProducto))
 				.findFirst().map(productsAux->productsAux)
 				.orElse(null)!=null) {
+			System.out.println("Llega");
 			
 			for (int i = 0; i < products.size(); i++) {
 				JSONObject ob= new JSONObject();
-				if(products.get(i).getName()==nombreProducto) {
+				if(products.get(i).getName().equals(nombreProducto)) {
 					ob.put("name", nombreProducto);
 					ob.put("price", price);
 				}else {
@@ -117,6 +118,10 @@ public class ProductoPersistence {
 				i=0;
 			}
 		}
+		
+		if(products.get(0).getName().equalsIgnoreCase(nombreProducto)) {
+			products.remove(0);
+		}
 		SobreEscribirArchivoProducto(products);
 		if(products.stream()
 				.filter(productsAux->productsAux.getName()
@@ -131,7 +136,7 @@ public class ProductoPersistence {
 	public ArrayList<Producto> TraerTodosloProductos(){
 		ObjectMapper mapper = new ObjectMapper();
 		products= new ArrayList();
-		System.out.println("funciona");
+	//	System.out.println("funciona");
 		try {
 			
 			products= mapper.readValue(new File(ruta),

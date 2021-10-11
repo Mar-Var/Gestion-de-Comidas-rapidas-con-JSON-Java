@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import co.edu.uptc.logica.modelo.DateUses;
 import co.edu.uptc.logica.modelo.Domiciliario;
+import co.edu.uptc.logica.modelo.Pedido;
 import co.edu.uptc.logica.modelo.Producto;
 
 public class DomiciliariosPersistence {
@@ -38,7 +39,7 @@ public class DomiciliariosPersistence {
 		try {
 			fileExist();
 		} catch (IOException e1) {
-			System.out.println("No existe el archivo");
+
 		}
 		JSONArray content = new JSONArray();
 		
@@ -54,6 +55,8 @@ public class DomiciliariosPersistence {
 			date1.put("day",domiciliario.get(i).getBirthday().getDay());
 			
 			ob.put("birthday", date1);
+			ob.put("cel", domiciliario.get(i).getCel());
+			ob.put("adress", domiciliario.get(i).getAdress());
 			content.add(ob);
 		}
 		try {
@@ -68,7 +71,7 @@ public class DomiciliariosPersistence {
 		try {
 			fileExist();
 		} catch (IOException e1) {
-			System.out.println("No existe el archivo");
+		
 		}
 		try {
 			JSONArray content = new JSONArray();
@@ -91,6 +94,8 @@ public class DomiciliariosPersistence {
 					date1.put("day",domiciliario.get(i).getBirthday().getDay());
 					
 					ob.put("birthday", date1);
+					ob.put("cel", domiciliario.get(i).getCel());
+					ob.put("adress", domiciliario.get(i).getAdress());
 
 					content.add(ob);
 				}
@@ -106,6 +111,10 @@ public class DomiciliariosPersistence {
 			date.put("day",domiciliarioAgregar.getBirthday().getDay());
 			
 			nuevoProducto.put("birthday", date);
+			nuevoProducto.put("cel", domiciliarioAgregar.getCel());
+
+			nuevoProducto.put("adress", domiciliarioAgregar.getAdress());
+
 			content.add(nuevoProducto);
 			Files.write(Paths.get(ruta), content.toJSONString().getBytes());
 			return true;
@@ -115,7 +124,9 @@ public class DomiciliariosPersistence {
 		}
 		
 	}
-	public boolean actualizarDomiciliario(String name, String lastName, int identification, DateUses birthday) throws IOException {
+
+	public boolean actualizarDomiciliario(String name, String lastName, long identification, DateUses birthday,String cel,String direction) throws IOException {
+
 		JSONArray content = new JSONArray();
 		domiciliario =TraerTodoslosdomiciliarios();
 		if(domiciliario!=null && domiciliario.stream()
@@ -137,6 +148,8 @@ public class DomiciliariosPersistence {
 					date1.put("day",birthday.getDay());
 					
 					ob.put("birthday",  date1);
+					ob.put("cel", cel);
+					ob.put("adress", direction);
 				}else {
 					ob.put("name", domiciliario.get(i).getName());
 					ob.put("lastName", domiciliario.get(i).getLastName());
@@ -147,6 +160,8 @@ public class DomiciliariosPersistence {
 					date1.put("month",domiciliario.get(i).getBirthday().getMonth());
 					date1.put("day",domiciliario.get(i).getBirthday().getDay());
 					ob.put("birthday",date1);
+					ob.put("cel", domiciliario.get(i).getCel());
+					ob.put("adress", domiciliario.get(i).getAdress());
 					
 				}
 				content.add(ob);
@@ -169,6 +184,11 @@ public class DomiciliariosPersistence {
 				i=0;
 			}
 		}
+		if(domiciliario.get(0).getIdentification()==identification) {
+			domiciliario.remove(0);
+		}
+		
+		
 		SobreEscribirArchivoProducto(domiciliario);
 		if(domiciliario.stream()
 				.filter(productsAux->String.valueOf(productsAux.getIdentification())
@@ -183,12 +203,14 @@ public class DomiciliariosPersistence {
 	public ArrayList<Domiciliario> TraerTodoslosdomiciliarios(){
 		ObjectMapper mapper = new ObjectMapper();
 		domiciliario= new ArrayList();
-		
 		try {
 			domiciliario= mapper.readValue(new File(ruta),
 					mapper.getTypeFactory().constructCollectionType(ArrayList.class, Domiciliario.class));
+
 			return domiciliario;
 		} catch (Exception e) {
+			
+			e.printStackTrace();
 			return null;
 		}
 	}

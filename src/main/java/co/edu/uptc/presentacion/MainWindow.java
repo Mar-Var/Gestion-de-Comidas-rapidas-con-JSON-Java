@@ -5,7 +5,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Scrollbar;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -24,6 +26,12 @@ import javax.swing.text.TabExpander;
 
 import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
+
+import co.edu.uptc.logica.modelo.Domiciliario;
+import co.edu.uptc.logica.modelo.Producto;
+import co.edu.uptc.persistencia.DomiciliariosPersistence;
+import co.edu.uptc.persistencia.PedidoPersistence;
+import co.edu.uptc.persistencia.ProductoPersistence;
 
 
 public class MainWindow extends JFrame {
@@ -70,10 +78,10 @@ public class MainWindow extends JFrame {
 	private JPanel panelpedidos;
 	
 	private JPanel panelInternoPedidos;
-	private JLabel lbCedulaCliente;
-	private JTextField txtCedulaCliente;
-	private JLabel lbNombreCiente;
+	private JLabel lbNombreCliente;
 	private JTextField txtNombreCliente;
+	private JLabel lbApellidoCliente;
+	private JTextField txtApellidoCliente;
 	private JLabel lbDireccionCliente;
 	private JTextField txtDireccioncliente;
 	private JLabel lbTelefonoCliente;
@@ -114,6 +122,8 @@ public class MainWindow extends JFrame {
 	private JTable tblPreferencias;
 	private DefaultTableModel dtblPreferencias;
 	private JScrollPane spPreferencias;
+	ProductoPersistence pp;
+	DomiciliariosPersistence dp;
 	
 	
 	public MainWindow() {
@@ -128,7 +138,13 @@ public class MainWindow extends JFrame {
 	public void begin() {
 		createComponents();
 		addComponents();
-		
+		pp= new ProductoPersistence();
+		dp= new DomiciliariosPersistence();
+		HandlingEvents eve = new HandlingEvents(this);
+		eve.llenarTablasProductos(dftblProductos, pp.TraerTodosloProductos());
+		eve.llenarTablaDomiciliario(dftblDomiciliario, dp.TraerTodoslosdomiciliarios());
+		eve.actualizarComboBoxdomiciliarios(cbDomiciliario, dp.TraerTodoslosdomiciliarios());
+		eve.actualizarComboBoxProductos(cbProductos, pp.TraerTodosloProductos());
 	}
 
 	public void createComponents() {
@@ -141,24 +157,61 @@ public class MainWindow extends JFrame {
 		panelInternoDomiciliario.setBorder(new TitledBorder("Informacion del domiciliario"));
 		panelInternoDomiciliario.setLayout(new GridBagLayout());
 		
-		lbnombreDomiciliario=new JLabel("Identificacion del Domiciliario");
+		lbnombreDomiciliario=new JLabel("Nombre del Domiciliario");
 		txtnombreDomiciliario=new JTextField(20);
 		lbApellidosDomiciliario=new JLabel("Apellidos");
 		txtApellidosDomiciliario= new JTextField(20);
 		lbCedula=new JLabel("Cedula");
 		txtCedula=new JTextField(20);
+		txtCedula.addKeyListener(new KeyAdapter()
+		{
+		   public void keyTyped(KeyEvent e)
+		   {
+		      char caracter = e.getKeyChar();
+
+		      // Verificar si la tecla pulsada no es un digito
+		      if(((caracter < '0') ||
+		         (caracter > '9')) &&
+		         (caracter != '\b' /*corresponde a BACK_SPACE*/))
+		      {
+		         e.consume();  // ignorar el evento de teclado
+		      }
+		   }
+		});
 		lbfechaNacimiento=new JLabel("Fecha nacimiento");
 		dcFechaNacimiento= new JDateChooser();
 		lbDireccion= new JLabel("Direccion");
 		txtDireccion=new JTextField(20);
 		lbTelefono= new JLabel("Telefono");
 		txtTelefono= new JTextField(20);
-		btnAgregar=new JButton("Agregar");
-		btnActualizar=new JButton("Actualizar");
-		btnEliminar=new JButton("Eliminar");
-		dftblDomiciliario= new DefaultTableModel(new Object[] {"Nombre","Apellido","Identificacion","Nacimiento"},0);
+		txtTelefono.addKeyListener(new KeyAdapter()
+		{
+		   public void keyTyped(KeyEvent e)
+		   {
+		      char caracter = e.getKeyChar();
+
+		      // Verificar si la tecla pulsada no es un digito
+		      if(((caracter < '0') ||
+		         (caracter > '9')) &&
+		         (caracter != '\b' /*corresponde a BACK_SPACE*/))
+		      {
+		         e.consume();  // ignorar el evento de teclado
+		      }
+		   }
+		});
+		btnAgregar=new JButton("Agregar domiciliario");
+		btnAgregar.setActionCommand(HandlingEvents.ADD_DOMICILIARIO);
+		btnAgregar.addActionListener(new HandlingEvents(this));
+		btnActualizar=new JButton("Actualizar domiciliario");
+		btnActualizar.setActionCommand(HandlingEvents.UPDATE_DOMICILIARIO);
+		btnActualizar.addActionListener(new HandlingEvents(this));
+		btnEliminar=new JButton("Eliminar domiciliario");
+		btnEliminar.setActionCommand(HandlingEvents.DELETE_DOMICILIARIO);
+		btnEliminar.addActionListener(new HandlingEvents(this));
+		dftblDomiciliario= new DefaultTableModel(new Object[] {"Nombre","Apellido","Identificacion","Nacimiento","Telefono","Direccion"},0);
 		tblDomiciliario= new JTable(dftblDomiciliario);
 		spDomiciliario = new JScrollPane(tblDomiciliario);
+		tblDomiciliario.addMouseListener(new HandlingEvents(this));
 		
 		panelProductos=new JPanel();
 		panelProductos.setLayout(new GridBagLayout());
@@ -170,14 +223,36 @@ public class MainWindow extends JFrame {
 		lbNombreProducto= new JLabel("Nombre");
 		txtNombreProducto= new JTextField(20);
 		lbPrecioProducto= new JLabel("Precio");
+
 		txtPrecioProducto= new JTextField(20); 
+		txtPrecioProducto.addKeyListener(new KeyAdapter()
+		{
+		   public void keyTyped(KeyEvent e)
+		   {
+		      char caracter = e.getKeyChar();
+
+		      // Verificar si la tecla pulsada no es un digito
+		      if(((caracter < '0') ||
+		         (caracter > '9')) &&
+		         (caracter != '\b' /*corresponde a BACK_SPACE*/))
+		      {
+		         e.consume();  // ignorar el evento de teclado
+		      }
+		   }
+		});
 		dftblProductos= new DefaultTableModel(new Object[] {"Nombre","Costo"},0);
 		tblProductos= new JTable(dftblProductos);
+		tblProductos.addMouseListener(new HandlingEvents(this));
 		spProductos= new JScrollPane(tblProductos);
-		btnAgregarproducto = new JButton("Agregar");
-		btnActualizarProducto=new JButton("Actualizar");
-		btnBuscarProducto= new JButton("Buscar");
-		btnEliminarProducto=new JButton("Eliminar");
+		btnAgregarproducto = new JButton("Agregar producto");
+		btnAgregarproducto.setActionCommand(HandlingEvents.ADD_PRODUCTO);
+		btnAgregarproducto.addActionListener(new HandlingEvents(this));
+		btnActualizarProducto=new JButton("Actualizar producto");
+		btnActualizarProducto.setActionCommand(HandlingEvents.UPDATE_PRODUCTO);
+		btnActualizarProducto.addActionListener(new HandlingEvents(this));
+		btnEliminarProducto=new JButton("Eliminar producto");
+		btnEliminarProducto.setActionCommand(HandlingEvents.DELETE_PRODUCTO);
+		btnEliminarProducto.addActionListener(new HandlingEvents(this));
 		
 		panelpedidos=new JPanel();
 		panelpedidos.setLayout(new GridBagLayout());
@@ -186,34 +261,66 @@ public class MainWindow extends JFrame {
 		panelInternoPedidos.setLayout(new GridBagLayout());
 		panelInternoPedidos.setBorder(new TitledBorder("Datos del Pedido"));
 		
-		lbCedulaCliente=new JLabel("Cedula Cliente");
-		txtCedulaCliente=new JTextField(20);
-		lbNombreCiente=new JLabel("Nombre Cliente");
+		lbNombreCliente=new JLabel("Nombre Cliente");
+		txtNombreCliente=new JTextField(20);
+		lbApellidoCliente=new JLabel("Apellido Cliente");
 		lbDireccionCliente=new JLabel("Direccion");
 		lbTelefonoCliente=new JLabel("Telefono");
 		lbDomiciliario=new JLabel("Domiciliario");
 		cbDomiciliario= new JComboBox();
-		cbProductos=new JComboBox<>();
+		cbProductos=new JComboBox<String>();
+		ProductoPersistence p = new ProductoPersistence();
+		ArrayList<Producto> ap;
+		if(p.TraerTodosloProductos()!=null) {
+			ap=p.TraerTodosloProductos();
+			for (Producto producto : ap) {
+				cbProductos.addItem(producto.getName());
+			}
+		}
+
 		lbCantidadProductos=new JLabel("Cantidad");
 		txtCantidadProductos= new JTextField(10);
+		txtCantidadProductos.addKeyListener(new KeyAdapter()
+		{
+		   public void keyTyped(KeyEvent e)
+		   {
+		      char caracter = e.getKeyChar();
+
+		      // Verificar si la tecla pulsada no es un digito
+		      if(((caracter < '0') ||
+		         (caracter > '9')) &&
+		         (caracter != '\b' /*corresponde a BACK_SPACE*/))
+		      {
+		         e.consume();  // ignorar el evento de teclado
+		      }
+		   }
+		});
 		
 		dfltProductospedido = new  DefaultListModel();
 		ltProductosPedido = new  JList(dfltProductospedido);
 		jsProductosPedido = new JScrollPane(ltProductosPedido);
 		btnAgregarCarrito=new JButton("Agregar al carrito");
+		btnAgregarCarrito.setActionCommand(HandlingEvents.ADD_PEDIDO);
+		btnAgregarCarrito.addActionListener(new HandlingEvents(this));
 		btnTerminarpedido= new JButton("Terminar pedido");
+		btnTerminarpedido.setActionCommand(HandlingEvents.SEND_PEDIDO);
+		btnTerminarpedido.addActionListener(new HandlingEvents(this));
 		btnLimpiarPedidos= new JButton("Limpiar campos");
+		btnLimpiarPedidos.setActionCommand(HandlingEvents.CLEAR_FIELDS);
+		btnLimpiarPedidos.addActionListener(new HandlingEvents(this));
 		
 		panelGestionesExtras=new JPanel();
 		panelGestionesExtras.setLayout(new GridBagLayout());
-		panelGestionesExtras.setSize(new Dimension(MAXIMIZED_HORIZ,MAXIMIZED_VERT));;
 		
 		panelSuperiorgestionesExtras=new JPanel();
 		panelSuperiorgestionesExtras.setBorder(new TitledBorder("Bucador de pedidos por fecha"));
 		panelSuperiorgestionesExtras.setLayout(new GridBagLayout());
-		panelSuperiorgestionesExtras.setSize(new Dimension(MAXIMIZED_HORIZ,400));;
+		
 		lbFechaVenta= new JLabel("Fecha de venta");
 		lbTotalVentas = new JLabel("Total de venta");
+		btnBuscarProducto= new JButton("Buscar");
+		btnBuscarProducto.setActionCommand(HandlingEvents.GET_POR_FECHAS);
+		btnBuscarProducto.addActionListener(new HandlingEvents(this));
 		dcFechaVentas= new JDateChooser();
 		txtTotalventas= new JTextField(20);
 		txtTotalventas.setEnabled(false);
@@ -226,7 +333,9 @@ public class MainWindow extends JFrame {
 		panelInferiorIgestionesExtras.setBorder(new TitledBorder("liquidacion"));
 		panelInferiorIgestionesExtras.setLayout(new GridBagLayout());
 		panelInferiorIgestionesExtras.setSize(400, 400);
-		btnObtenerLiquidacion= new JButton("Obtener");
+		btnObtenerLiquidacion= new JButton("Obtener Liquidacion");
+		btnObtenerLiquidacion.setActionCommand(HandlingEvents.GET_LIQUIDACION);
+		btnObtenerLiquidacion.addActionListener(new HandlingEvents(this));
 
 		dftblLiquidaciones= new DefaultTableModel(new Object[] {"Nombre","Valor Liquidacion"},0);
 		tblLiquidaciones = new JTable(dftblLiquidaciones);
@@ -241,13 +350,33 @@ public class MainWindow extends JFrame {
 		dtblPreferencias= new DefaultTableModel(new Object[] {"Nombre","Cantidad"},0);
 		tblPreferencias= new JTable(dtblPreferencias);
 		spPreferencias= new JScrollPane(tblPreferencias);
-		txtNombreCliente= new JTextField(20);
+		txtApellidoCliente= new JTextField(20);
 		txtDireccioncliente= new JTextField(20);
 		txtTelefonoCliente = new JTextField(20);
-		btnObtenerPreferencia=new JButton("Obtener");
+		txtTelefonoCliente.addKeyListener(new KeyAdapter()
+		{
+		   public void keyTyped(KeyEvent e)
+		   {
+		      char caracter = e.getKeyChar();
+
+		      // Verificar si la tecla pulsada no es un digito
+		      if(((caracter < '0') ||
+		         (caracter > '9')) &&
+		         (caracter != '\b' /*corresponde a BACK_SPACE*/))
+		      {
+		         e.consume();  // ignorar el evento de teclado
+		      }
+		   }
+		});
+		btnObtenerPreferencia=new JButton("Obtener Preferencias");
+		btnObtenerPreferencia.setActionCommand(HandlingEvents.GET_PREFERENCIAS);
+		btnObtenerPreferencia.addActionListener(new HandlingEvents(this));
+
+		
 		
 		
 	}
+	
 
 	
 	public void addComponents() {
@@ -404,10 +533,10 @@ public class MainWindow extends JFrame {
 		g.anchor=GridBagConstraints.WEST;
 		g.gridx=0;
 		g.gridy=0;
-		panelInternoPedidos.add(lbCedulaCliente,g);
+		panelInternoPedidos.add(lbNombreCliente,g);
 		g.gridx=1;
 
-		panelInternoPedidos.add(txtCedulaCliente,g);
+		panelInternoPedidos.add(txtNombreCliente,g);
 		//g.fill= GridBagConstraints.NONE;
 		g.gridx=2;
 		panelInternoPedidos.add(new JLabel("Identificacion del Domiciliario"),g);
@@ -419,10 +548,10 @@ public class MainWindow extends JFrame {
 		g.weightx=1;
 		g.gridy=1;
 		g.gridx=0;
-		panelInternoPedidos.add(lbNombreCiente,g);
+		panelInternoPedidos.add(lbApellidoCliente,g);
 		g.gridx=1;
 		//g.fill= GridBagConstraints.BOTH;
-		panelInternoPedidos.add(txtNombreCliente,g);
+		panelInternoPedidos.add(txtApellidoCliente,g);
 		g.gridx=2;
 		//g.fill=GridBagConstraints.NONE;
 		panelInternoPedidos.add(cbProductos,g);
@@ -447,6 +576,11 @@ public class MainWindow extends JFrame {
 		g.gridx=3;
 		panelInternoPedidos.add(btnAgregarCarrito,g);
 		g.gridy=3;
+		g.gridx=0;
+		panelInternoPedidos.add(lbTelefonoCliente,g);
+		g.gridx=1;
+		panelInternoPedidos.add(txtTelefonoCliente,g);
+		g.gridy=4;
 		g.gridx=3;
 		g.fill=GridBagConstraints.NONE;
 		g.anchor=GridBagConstraints.CENTER;
@@ -539,6 +673,249 @@ public class MainWindow extends JFrame {
 		g.weighty=1.0;
 		panelInferiorDgestionesExtras.add(spPreferencias,g);
 	}
+
+	public JTextField getTxtnombreDomiciliario() {
+		return txtnombreDomiciliario;
+	}
+
+	public void setTxtnombreDomiciliario(JTextField txtnombreDomiciliario) {
+		this.txtnombreDomiciliario = txtnombreDomiciliario;
+	}
+
+	public JTextField getTxtApellidosDomiciliario() {
+		return txtApellidosDomiciliario;
+	}
+
+	public void setTxtApellidosDomiciliario(JTextField txtApellidosDomiciliario) {
+		this.txtApellidosDomiciliario = txtApellidosDomiciliario;
+	}
+
+	public JTextField getTxtCedula() {
+		return txtCedula;
+	}
+
+	public void setTxtCedula(JTextField txtCedula) {
+		this.txtCedula = txtCedula;
+	}
+
+	public JDateChooser getDcFechaNacimiento() {
+		return dcFechaNacimiento;
+	}
+
+	public void setDcFechaNacimiento(JDateChooser dcFechaNacimiento) {
+		this.dcFechaNacimiento = dcFechaNacimiento;
+	}
+
+	public JTextField getTxtDireccion() {
+		return txtDireccion;
+	}
+
+	public void setTxtDireccion(JTextField txtDireccion) {
+		this.txtDireccion = txtDireccion;
+	}
+
+	public JTextField getTxtTelefono() {
+		return txtTelefono;
+	}
+
+	public void setTxtTelefono(JTextField txtTelefono) {
+		this.txtTelefono = txtTelefono;
+	}
+
+	public DefaultTableModel getDftblDomiciliario() {
+		return dftblDomiciliario;
+	}
+
+	public void setDftblDomiciliario(DefaultTableModel dftblDomiciliario) {
+		this.dftblDomiciliario = dftblDomiciliario;
+	}
+
+	public JTextField getTxtNombreProducto() {
+		return txtNombreProducto;
+	}
+
+	public void setTxtNombreProducto(JTextField txtNombreProducto) {
+		this.txtNombreProducto = txtNombreProducto;
+	}
+
+	public JTextField getTxtPrecioProducto() {
+		return txtPrecioProducto;
+	}
+
+	public void setTxtPrecioProducto(JTextField txtPrecioProducto) {
+		this.txtPrecioProducto = txtPrecioProducto;
+	}
+
+	public DefaultTableModel getDftblProductos() {
+		return dftblProductos;
+	}
+
+	public void setDftblProductos(DefaultTableModel dftblProductos) {
+		this.dftblProductos = dftblProductos;
+	}
+
+	public JTextField getTxtNombreCliente() {
+		return txtNombreCliente;
+	}
+
+	public void setTxtNombreCliente(JTextField txtCedulaCliente) {
+		this.txtNombreCliente = txtCedulaCliente;
+	}
+
+	public JTextField getTxtApellidoCliente() {
+		return txtApellidoCliente;
+	}
+
+	public void setTxtApellidoCliente(JTextField txtNombreCliente) {
+		this.txtApellidoCliente = txtNombreCliente;
+	}
+
+	public JTextField getTxtDireccioncliente() {
+		return txtDireccioncliente;
+	}
+
+	public void setTxtDireccioncliente(JTextField txtDireccioncliente) {
+		this.txtDireccioncliente = txtDireccioncliente;
+	}
+
+	public JTextField getTxtTelefonoCliente() {
+		return txtTelefonoCliente;
+	}
+
+	public void setTxtTelefonoCliente(JTextField txtTelefonoCliente) {
+		this.txtTelefonoCliente = txtTelefonoCliente;
+	}
+
+	public JComboBox getCbDomiciliario() {
+		return cbDomiciliario;
+	}
+
+	public void setCbDomiciliario(JComboBox cbDomiciliario) {
+		this.cbDomiciliario = cbDomiciliario;
+	}
+
+	public JComboBox getCbProductos() {
+		return cbProductos;
+	}
+
+	public void setCbProductos(JComboBox cbProductos) {
+		this.cbProductos = cbProductos;
+	}
+
+	public JTextField getTxtCantidadProductos() {
+		return txtCantidadProductos;
+	}
+
+	public void setTxtCantidadProductos(JTextField txtCantidadProductos) {
+		this.txtCantidadProductos = txtCantidadProductos;
+	}
+
+	public DefaultListModel getDfltProductospedido() {
+		return dfltProductospedido;
+	}
+
+	public void setDfltProductospedido(DefaultListModel dfltProductospedido) {
+		this.dfltProductospedido = dfltProductospedido;
+	}
+
+	public JDateChooser getDcFechaVentas() {
+		return dcFechaVentas;
+	}
+
+	public void setDcFechaVentas(JDateChooser dcFechaVentas) {
+		this.dcFechaVentas = dcFechaVentas;
+	}
+
+	public JTextField getTxtTotalventas() {
+		return txtTotalventas;
+	}
+
+	public void setTxtTotalventas(JTextField txtTotalventas) {
+		this.txtTotalventas = txtTotalventas;
+	}
+
+	public DefaultTableModel getDftblVentasPorFecha() {
+		return dftblVentasPorFecha;
+	}
+
+	public void setDftblVentasPorFecha(DefaultTableModel dftblVentasPorFecha) {
+		this.dftblVentasPorFecha = dftblVentasPorFecha;
+	}
+
+	public DefaultTableModel getDftblLiquidaciones() {
+		return dftblLiquidaciones;
+	}
+
+	public void setDftblLiquidaciones(DefaultTableModel dftblLiquidaciones) {
+		this.dftblLiquidaciones = dftblLiquidaciones;
+	}
+
+	public JTextField getTxtProductoPreferente() {
+		return txtProductoPreferente;
+	}
+
+	public void setTxtProductoPreferente(JTextField txtProductoPreferente) {
+		this.txtProductoPreferente = txtProductoPreferente;
+	}
+
+	public JTable getTblDomiciliario() {
+		return tblDomiciliario;
+	}
+
+	public void setTblDomiciliario(JTable tblDomiciliario) {
+		this.tblDomiciliario = tblDomiciliario;
+	}
+
+	public JTable getTblProductos() {
+		return tblProductos;
+	}
+
+	public void setTblProductos(JTable tblProductos) {
+		this.tblProductos = tblProductos;
+	}
+
+	public JTable getTblventasporFecha() {
+		return tblventasporFecha;
+	}
+
+	public void setTblventasporFecha(JTable tblventasporFecha) {
+		this.tblventasporFecha = tblventasporFecha;
+	}
+
+	public JTable getTblLiquidaciones() {
+		return tblLiquidaciones;
+	}
+
+	public void setTblLiquidaciones(JTable tblLiquidaciones) {
+		this.tblLiquidaciones = tblLiquidaciones;
+	}
+
+	public JTable getTblPreferencias() {
+		return tblPreferencias;
+	}
+
+	public void setTblPreferencias(JTable tblPreferencias) {
+		this.tblPreferencias = tblPreferencias;
+	}
+
+	public JList getLtProductosPedido() {
+		return ltProductosPedido;
+	}
+
+	public void setLtProductosPedido(JList ltProductosPedido) {
+		this.ltProductosPedido = ltProductosPedido;
+	}
+
+	public DefaultTableModel getDtblPreferencias() {
+		return dtblPreferencias;
+	}
+
+	public void setDtblPreferencias(DefaultTableModel dtblPreferencias) {
+		this.dtblPreferencias = dtblPreferencias;
+	}
+	
+	
+	
 	
 	
 	

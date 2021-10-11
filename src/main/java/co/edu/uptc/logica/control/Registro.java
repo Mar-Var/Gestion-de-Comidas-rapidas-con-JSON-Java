@@ -57,16 +57,26 @@ public class Registro {
 			,String domiciliarioid,ArrayList<ProductosSolicitados> orderedProducts) {
 		//Hayq ue quitar ese cost del parametro del metodo
 		double cost=0;
+		
+		for (ProductosSolicitados productosSolicitados : orderedProducts) {
+			for (Producto product : productoPersistence.TraerTodosloProductos()) {
+				if(product.getName().equals(productosSolicitados.getName())) {
+					cost+=product.getPrice()*productosSolicitados.getAmount();
+				}
+			}
+		}
+		cost+=(cost*0.3);
+		
 		DateUses date= new DateUses(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), LocalDate.now().getDayOfMonth());
 		Pedido p = new Pedido(clientname, clienteLastName, clienteCell, direction, domiciliarioid, orderedProducts, date, cost);	
 		return pedidoPersistence.AgregarUnNuevoPedido(p);
 	}
-	public boolean agregarDomiciliario(String name, String lastName, int identification, DateUses birthday){
-		Domiciliario d = new Domiciliario(name,lastName,identification,birthday);
+	public boolean agregarDomiciliario(String name, String lastName, int identification, DateUses birthday, String cel,String direction){
+		Domiciliario d = new Domiciliario(name,lastName,identification,birthday,cel,direction);
 		return domiciliarioPersistence.agregarUnNuevoDomiciliario(d);		
 	}
-	public boolean actualizarDomiciliario(String name, String lastName, int identification, DateUses birthday) throws IOException {
-		return domiciliarioPersistence.actualizarDomiciliario(name, lastName, identification, birthday);
+	public boolean actualizarDomiciliario(String name, String lastName, int identification, DateUses birthday, String cel,String direction) throws IOException {
+		return domiciliarioPersistence.actualizarDomiciliario(name, lastName, identification, birthday,cel,direction);
 	}
 	public boolean eliminarDomiciliario(int identification) {
 		return domiciliarioPersistence.EliminarDomiciliario(identification);
@@ -82,24 +92,29 @@ public class Registro {
 		for (int i = 0; i < domiciliario.size(); i++) {
 			double aPagar=0;
 			for (int j = 0; j < pedidos.size(); j++) {
-				if(pedidos.get(i).getDomiciliarioid()==String.valueOf(domiciliario.get(i).getIdentification())) {
-					aPagar+=pedidos.get(i).getCost()*0.2;
+				
+				if(pedidos.get(j).getDomiciliarioid().equals(String.valueOf(domiciliario.get(i).getIdentification()))) {
+					System.out.println("Entra"+pedidos.get(j).getCost());
+					aPagar+=pedidos.get(j).getCost()*0.2;
 				}
 			}
 			String[] personalIquidar= {domiciliario.get(i).getName(),domiciliario.get(i).getLastName()
 					,String.valueOf(aPagar)};
+			System.out.println(personalIquidar[0]+"/"+aPagar);
 			liquidar.add(personalIquidar);
 		}
+		
+		
 		for (String[] object : liquidar) {
 
-			if(Double.parseDouble(object[3])>mayor) {
-				mayor=Double.parseDouble(object[3]);
+			if(Double.parseDouble(object[2])>mayor) {
+				mayor=Double.parseDouble(object[2]);
 			}
 		}
 		for (int i = 0; i < liquidar.size(); i++) {
-			if(Double.parseDouble(liquidar.get(i)[3]) == mayor ) {
-				double añadirbono=Double.parseDouble(liquidar.get(i)[3])+20000;
-				liquidar.get(i)[3]=String.valueOf(añadirbono);
+			if(Double.parseDouble(liquidar.get(i)[2]) == mayor ) {
+				double añadirbono=Double.parseDouble(liquidar.get(i)[2])+20000;
+				liquidar.get(i)[2]=String.valueOf(añadirbono);
 			}
 			
 		}
@@ -125,7 +140,11 @@ public class Registro {
 		return value;
 	}
 	
-	public Preferencias mostrarPreferencias(){
+	public String mostrarPreferenciaproducto(){	
+		return mostrarPreferenciasListado().get(mostrarPreferenciasListado().size()-1).getNombre();
+	}
+	
+	public ArrayList<Preferencias> mostrarPreferenciasListado(){
 		pedidos= pedidoPersistence.TraerTodoslosPedidios();
 		productos= productoPersistence.TraerTodosloProductos();
 		ArrayList<Preferencias> preferencias = new ArrayList<Preferencias>();
@@ -134,8 +153,8 @@ public class Registro {
 			contador=0;
 			for (Pedido pe : pedidos) {
 				for (int i = 0; i < pe.getOrderedProducts().size(); i++) {
-					if(pe.getOrderedProducts().get(i).getName()==p.getName()) {
-						contador++;
+					if(pe.getOrderedProducts().get(i).getName().equals(p.getName())) {
+						contador+=pe.getOrderedProducts().get(i).getAmount();
 					}
 				}
 			}
@@ -148,7 +167,7 @@ public class Registro {
 			}
 		});
 		
-		return preferencias.get(-1);
+		return preferencias;
 	}
 	
 }

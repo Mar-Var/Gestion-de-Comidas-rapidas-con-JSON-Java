@@ -25,7 +25,7 @@ public class ProductosSolicitados {
 	}
 	@Override
 	public String toString() {
-		return "ProductosSolicitados [name=" + name + ", amount=" + amount + "]";
+		return name + ":" + amount + "\n";
 	}
 
 	

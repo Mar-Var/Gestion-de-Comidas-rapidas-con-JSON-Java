@@ -99,8 +99,8 @@ public class PedidoPersistence {
 					for (int j = 0; j < pedidos.get(i).getOrderedProducts().size(); j++) {
 						producto.put("name", pedidos.get(i).getOrderedProducts().get(j).getName());
 						producto.put("amount", pedidos.get(i).getOrderedProducts().get(j).getAmount());
+						pedidosCliente.add(producto);
 					}
-					pedidosCliente.add(producto);
 					
 					ob.put("orderedProducts", pedidosCliente);
 					
@@ -127,8 +127,9 @@ public class PedidoPersistence {
 			for (int j = 0; j < pedidoAgregar.getOrderedProducts().size(); j++) {
 				producto.put("name", pedidoAgregar.getOrderedProducts().get(j).getName());
 				producto.put("amount", pedidoAgregar.getOrderedProducts().get(j).getAmount());
+				pedidosCliente.add(producto);
 			}
-			pedidosCliente.add(producto);
+			
 			
 			nuevoProducto.put("orderedProducts",pedidosCliente);
 			
