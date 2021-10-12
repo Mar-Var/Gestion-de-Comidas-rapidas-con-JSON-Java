@@ -1,11 +1,23 @@
 package co.edu.uptc.logica.modelo;
-
+/**
+ * Clase que define la entidad de productos que agregados al carrito
+ * @author Marcos Esteban Vargas Avella
+ *
+ */
 public class ProductosSolicitados {
 	private String name;
 	private int amount;
+	/**
+	 * Cosntructor de clase vacio
+	 */
 	public ProductosSolicitados() {
 		
 	}
+	/**
+	 * Constructor de clase para instanciar
+	 * @param name parametro de tipo String que representa el nombre del producto solicitado
+	 * @param amount Paramtro de tipo entero que representa la cantidad de productos que se solicitan
+	 */
 	public ProductosSolicitados(String name, int amount) {
 		super();
 		this.name = name;

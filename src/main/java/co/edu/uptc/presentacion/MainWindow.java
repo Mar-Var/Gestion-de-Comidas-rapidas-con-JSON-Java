@@ -33,7 +33,11 @@ import co.edu.uptc.persistencia.DomiciliariosPersistence;
 import co.edu.uptc.persistencia.PedidoPersistence;
 import co.edu.uptc.persistencia.ProductoPersistence;
 
-
+/**
+ * Clase donde se diseña y aplica la GUI de el proyecto
+ * @author Marcos Esteban vargas Avella
+ *
+ */
 public class MainWindow extends JFrame {
 
 	private JTabbedPane tabbedPane;
@@ -125,7 +129,9 @@ public class MainWindow extends JFrame {
 	ProductoPersistence pp;
 	DomiciliariosPersistence dp;
 	
-	
+	/**
+	 * Metodo Constructor de la clase
+	 */
 	public MainWindow() {
 		super("Rapidos y Furiosos");
 		setExtendedState(MAXIMIZED_BOTH);
@@ -134,6 +140,9 @@ public class MainWindow extends JFrame {
 		setResizable(true);
 		
 	}
+	/**
+	 * metodo que crear y añade elementos a la ventana principal
+	 */
 	
 	public void begin() {
 		createComponents();
@@ -146,7 +155,9 @@ public class MainWindow extends JFrame {
 		eve.actualizarComboBoxdomiciliarios(cbDomiciliario, dp.TraerTodoslosdomiciliarios());
 		eve.actualizarComboBoxProductos(cbProductos, pp.TraerTodosloProductos());
 	}
-
+	/**
+	 * Metodo donde se inicializan todos los componenetes
+	 */
 	public void createComponents() {
 		tabbedPane=new JTabbedPane();
 		panelDomiciliario= new JPanel();
@@ -377,7 +388,9 @@ public class MainWindow extends JFrame {
 		
 	}
 	
-
+/**
+ * metodo donde se añaden todos los componenetes a la ventana Principal
+ */
 	
 	public void addComponents() {
 		

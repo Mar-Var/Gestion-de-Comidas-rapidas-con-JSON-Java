@@ -20,19 +20,35 @@ import co.edu.uptc.logica.modelo.DateUses;
 import co.edu.uptc.logica.modelo.Domiciliario;
 import co.edu.uptc.logica.modelo.Pedido;
 import co.edu.uptc.logica.modelo.Producto;
-
+/**
+ * Clase que maneja la persistencia de los datos en un archivo JSON designado por una Ruta
+ * @author Marcos Esteban Vargas Avella
+ *
+ */
 public class DomiciliariosPersistence {
-	
+
 	private String ruta="Domiciliarios.json";
 	File file = new File(ruta);
 	ArrayList<Domiciliario> domiciliario;
-	
+	 /**
+	  * Metodo que permite verificar si un archiov existe y si no existe lo crea
+	  * @return Retorna un dato tipo booleano, true si crea el archivo y de lo contrario retorna false
+	  * @throws IOException
+	  */
 	public boolean fileExist() throws IOException {
 		if(!file.exists()) {
 			file.createNewFile();
+			return true;
 		}
 		return false;
 	}
+	/**
+	 * Metodo que permite sobreescribir un archivo JSON dado un {@link ArrayList} de tipo {@link Domiciliario}
+	 * @param domiciliario Parametro de tipo {@link ArrayList} de tipo {@link Domiciliario} con toda la infromacion que se
+	  	quiere agragar al archivo JSON
+	 * @return Retorna un dato de tipo boolean, true en caso de que se pueda agregar toda la informacion contenida en el 
+	 	{@link ArrayList} de tipo {@link Domiciliario} dentro del archivo JSON
+	 */
 	
 	public boolean SobreEscribirArchivoProducto(ArrayList<Domiciliario> domiciliario){
 		
@@ -67,6 +83,13 @@ public class DomiciliariosPersistence {
 		}
 
 	}
+	/**
+	 * Metodo que permite agregar registros a partir de una variable tipo {@link Domiciliario} con la informacion del 
+	  domiciliario
+	 * @param domiciliarioAgregar parametro de tipo {@link ArrayList} de tipo {@link Domiciliario} con la informacion de 
+	 	los nuevos registros o del registro
+	 * @return Retorna un valor tipo booleano, true si se hapidido añadir el nuevo registro y false si no se pudo.
+	 */
 	public boolean agregarUnNuevoDomiciliario(Domiciliario domiciliarioAgregar) {
 		try {
 			fileExist();
@@ -124,7 +147,19 @@ public class DomiciliariosPersistence {
 		}
 		
 	}
-
+	/**
+	 * metodo que permite buscar un registro en el archivo JSON y modificar las veriables que contiene.
+	 * @param name parametro de tipo String que representa el nuevo nombre del domiciliario
+	 * @param lastName parametro de tipo String que prepresenta el nuevo apellido del domiciliario
+	 * @param identification Parametro de tipo long que prepresenta el numero de identificacion deldomiciliario
+	 	este es inmodificable.
+	 * @param birthday Parametro que rpepresenta un dato de tipo {@link DateUses} que contiene la informacion del dia,
+	 	del mes y el año de nacimiento del domiciliario
+	 * @param cel parametro tipo String que representa el nuevo numero de celular de el {@link Domiciliario}
+	 * @param direction Parametro de tipo String que prepresenta el nuevo domicilio de el {@link Domiciliario}
+	 * @return Retorna un dato de tipo boolean, true si se puede actualizar y false si hubo algun problema con el proceso.
+	 * @throws IOException
+	 */
 	public boolean actualizarDomiciliario(String name, String lastName, long identification, DateUses birthday,String cel,String direction) throws IOException {
 
 		JSONArray content = new JSONArray();
@@ -174,7 +209,11 @@ public class DomiciliariosPersistence {
 		
 		return false;
 	}
-	
+	/**
+	 * Permite realizar una busqueda dentro del archivo JSON y eliminar un registro quer coinciada con el parametro ingresado
+	 * @param identification Parametro que representa un dato tipo entero para identificar al Domiciliario que se va a eliminar del registro 
+	 * @return Retorna un valor de tipo boolean, true cuando se haya eliminado y false cuando haya un error
+	 */
 	public boolean EliminarDomiciliario (int identification) {
 		domiciliario=TraerTodoslosdomiciliarios();
 		for (int i = 0; i < domiciliario.size(); i++) {
@@ -200,6 +239,11 @@ public class DomiciliariosPersistence {
 
 		return false;
 	}
+	/**
+	 * Metodo que permite traer toda la informacion de el archivo JSOn donde se almacena la informacion y presentarlo en formad e 
+	 	{@link ArrayList} de tipo {@link Domiciliario}
+	 * @return Retorna un {@link ArrayList} de tipo {@link Domiciliario} con toda la informacion contenida en el archivo JSON
+	 */
 	public ArrayList<Domiciliario> TraerTodoslosdomiciliarios(){
 		ObjectMapper mapper = new ObjectMapper();
 		domiciliario= new ArrayList();

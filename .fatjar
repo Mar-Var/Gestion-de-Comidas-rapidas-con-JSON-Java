@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Mon Oct 11 07:15:21 COT 2021
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=ProyectoMaven_fat.jar
+manifest.mergeall=true
+manifest.mainclass=test.Runner
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=

@@ -26,7 +26,11 @@ import co.edu.uptc.logica.modelo.ProductosSolicitados;
 import co.edu.uptc.persistencia.DomiciliariosPersistence;
 import co.edu.uptc.persistencia.PedidoPersistence;
 import co.edu.uptc.persistencia.ProductoPersistence;
-
+/**
+ * Clase que permite gestionar lo eventos de la interfaz grafica
+ * @author Marcos Esteban Vargas Avella
+ *
+ */
 
 public class HandlingEvents implements ActionListener,MouseListener {
 	
@@ -50,6 +54,11 @@ public class HandlingEvents implements ActionListener,MouseListener {
 	private MainWindow mainWindow;
 	private Registro r = new Registro();
 	ArrayList<ProductosSolicitados> ps=new ArrayList<ProductosSolicitados>();;
+	
+	/**
+	 * Constructor de la clase
+	 * @param mainWindow parametro de dato tipo {@link MainWindow}. Permite usar los elementos de la clase en esta.
+	 */
 	public HandlingEvents(MainWindow mainWindow) {
 		this.mainWindow = mainWindow;
 	}
@@ -277,7 +286,11 @@ public class HandlingEvents implements ActionListener,MouseListener {
 		
 	}
 	
-	
+	/**
+	 * Metodo que permite actualizar el {@link JComboBox} de los Domiciliarios
+	 * @param cbx parametro con un dato de tipo {@link JComboBox} que representa el cual se va a actualizar/modificar
+	 * @param arr Parametro de tipo {@link ArrayList} de tipo {@link Domiciliario} que contiene todos los Domiciliarios del establecimiento.
+	 */
 	public void actualizarComboBoxdomiciliarios(JComboBox<Integer> cbx, ArrayList<Domiciliario> arr) {
 		cbx.removeAllItems();
 		for (Domiciliario domiciliario : arr) {
@@ -286,12 +299,21 @@ public class HandlingEvents implements ActionListener,MouseListener {
 		}
 		
 	}
+	/**
+	 * Metodo que permite actualizar el {@link JComboBox} de los productos.
+	 * @param cbx parametro de tipo {@link JComboBox} de tipo String que se quiere actualizar
+	 * @param arr parametro de tipo {@link ArrayList} de tipo {@link Producto} que contiene todos los productos disponibles
+	 */
 	public void actualizarComboBoxProductos(JComboBox<String> cbx, ArrayList<Producto> arr) {
 		cbx.removeAllItems();
 		for (Producto producto : arr) {
 			cbx.addItem(producto.getName());
 		}
 	}
+	/**
+	 * metodo que permite añadir datos al {@link JComboBox} de Productos
+	 * @param cbproductos parametro tipo {@link JComboBox} a añadir items
+	 */
 	public void addCompenentsComboBoxProductos(JComboBox cbproductos) {
 		ProductoPersistence pp= new ProductoPersistence();
 		ArrayList<Producto> p = pp.TraerTodosloProductos();
@@ -299,6 +321,10 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			cbproductos.addItem(producto.getName());
 		}
 	}
+	/**
+	 * metodo que permite añadir datos al {@link JComboBox} de Domiciliarios
+	 * @param cbproductos parametro tipo {@link JComboBox} a añadir items a Domiciliario
+	 */
 	public void addCompenentsComboBoxDomiciliarios(JComboBox cbDomiciliarios) {
 		DomiciliariosPersistence dp = new DomiciliariosPersistence();
 		ArrayList<Domiciliario> d = dp.TraerTodoslosdomiciliarios();
@@ -306,7 +332,11 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			cbDomiciliarios.addItem(domiciliario.getIdentification());
 		}
 	}
-	
+	/**
+	 * Metodo que permite llenar la tabla de productos con informacion suminsitrada por un {@link ArrayList} de tipo {@link Producto}
+	 * @param dftbl Parametro tipo {@link DefaultTableModel} el cual va a ser modificado
+	 * @param datos Parametro tipo {@link ArrayList} de tipo {@link Producto} que suministrara la informacion a la tabla
+	 */
 	public void llenarTablasProductos(DefaultTableModel dftbl,ArrayList<Producto> datos) {
 		dftbl.setRowCount(0);
 		for (Producto producto : datos) {
@@ -314,6 +344,11 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			
 		}
 	}
+	/**
+	 * Metodo que permite llenar la tabla de Domiciliario con informacion suminsitrada por un {@link ArrayList} de tipo {@link Domiciliario}
+	 * @param dftbl Parametro tipo {@link DefaultTableModel} el cual va a ser modificado
+	 * @param datos Parametro tipo {@link ArrayList} de tipo {@link Domiciliario} que suministrara la informacion a la tabla
+	 */
 	public void llenarTablaDomiciliario(DefaultTableModel dftbl,ArrayList<Domiciliario> datos) {
 		dftbl.setRowCount(0);
 		for (Domiciliario domiciliario : datos) {
@@ -331,7 +366,11 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			dftbl.addRow(new Object[] {strings[0],strings[2]});
 		}
 	}
-	
+	/**
+	 * Metodo que permite llenar la tabla de Domiciliario con informacion suminsitrada por un {@link ArrayList} de tipo {@link Preferencias}
+	 * @param dftbl Parametro tipo {@link DefaultTableModel} el cual va a ser modificado
+	 * @param datos Parametro tipo {@link ArrayList} de tipo {@link Preferencias} que suministrara la informacion a la tabla
+	 */
 	
 	public void llenarTablaPreferencias(DefaultTableModel dftbl,ArrayList<Preferencias> datos) {
 		dftbl.setRowCount(0);
@@ -339,6 +378,11 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			dftbl.addRow(new Object[] {preferencias.getNombre(),preferencias.getCantidad()});
 		}
 	}
+	/**
+	 * Metodo que permite llenar la Lista de productos el el pedido con informacion suminsitrada por un {@link ArrayList} de tipo {@link ProductosSolicitados}
+	 * @param dflst Parametro tipo {@link DefaultTableModel} el cual va a ser modificado
+	 * @param productosSolicitados Parametro tipo {@link ArrayList} de tipo {@link ProductosSolicitados} que suministrara la informacion a la tabla
+	 */
 	
 	public void llenarListaRroductosPedidos(DefaultListModel<String> dflst,ArrayList<ProductosSolicitados> productosSolicitados) {
 			dflst.removeAllElements();
@@ -348,6 +392,12 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			
 		
 	}
+	
+	/**
+	 * Metodo que permite llenar la tabla de Pedidos con informacion segun la fecha
+	 * @param dftbl Parametro tipo {@link DefaultTableModel} el cual va a ser modificado
+	 * @param du Parametro tipo {@link DateUses} de tipo {@link Preferencias} que suministrara la informacion a la tabla
+	 */
 	public void llenarTablaVentasporFecha(DefaultTableModel dtbl,DateUses du) {
 		dtbl.setRowCount(0);
 		for (Pedido pedido : r.listarFechasGanancias(du)) {
@@ -364,7 +414,9 @@ public class HandlingEvents implements ActionListener,MouseListener {
 	}
 
 
-
+/**
+ * Metodos de gestion de eventos...
+ */
 	@Override
 	public void mouseClicked(java.awt.event.MouseEvent e) {
 		// TODO Auto-generated method stub

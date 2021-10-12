@@ -14,16 +14,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import co.edu.uptc.logica.modelo.Pedido;
 import co.edu.uptc.logica.modelo.Producto;
 import co.edu.uptc.utilidades.Archivo;
-
+/**
+ * clase que gestiona la persistencia y manipulacion de informacion referente al Archivo JSON
+ * @author Marcos Esteban Vargas Avella
+ *
+ */
 public class PedidoPersistence {
 	
 	private String Ruta="Pedidos.json";
 	File file = new File(Ruta);
 	ArrayList<Pedido> pedidos;
-	
+	/**
+	 * Contructor de la clase vacio
+	 */
 	public PedidoPersistence() {
 		
 	}
+	/**
+	 * metodo que sirve para saber si un archio existe y en caso de noe xistir lo crea
+	 * @return
+	 * @throws IOException
+	 */
 	public boolean fileExist() throws IOException {
 		if(!file.exists()) {
 			file.createNewFile();
@@ -31,7 +42,13 @@ public class PedidoPersistence {
 		
 		return false;
 	}	
-	
+	/**
+	 * metodo que peermite sobreescribir el archiov JSON con la informacion Contenida en un {@link ArrayList} de tipo
+	 	{@link Pedido}
+	 * @param contenido parametro de tipo {@link ArrayList} de tipo {@link Pedido} con la informacion a agregar al Archivo JSON
+	 * @return Retorna un dato boolean, true si se pudo sobreescribir con exito, de lo contrario arroja false;
+	 * @throws IOException
+	 */
 	public boolean SobreEscribirArchivoProducto(ArrayList<Pedido> contenido) throws IOException{
 		
 		fileExist();
@@ -75,6 +92,11 @@ public class PedidoPersistence {
 		}
 
 	}
+	/**
+	 * metodo que permite agregar un nuevo registro al archivo JSON con la informacion de un dato tipo {@link Pedido}
+	 * @param pedidoAgregar Parametro de tipo {@link Pedido} Con la informacion para crear el nuevo registro
+	 * @return
+	 */
 	public boolean AgregarUnNuevoPedido(Pedido pedidoAgregar) {
 		try {
 			fileExist();
@@ -149,6 +171,11 @@ public class PedidoPersistence {
 		}
 		
 	}
+	/**
+	 * Metodo que permite traer en forma de {@link ArrayList} de tipo {@link Pedido} toda la informacion contenida dentro del archivo JSON
+	 
+	 * @return Retorna un {@link ArrayList} de tipo {@link Pedido} con toda la informacion contenida en el archivo JSON
+	 */
 	
 	public ArrayList<Pedido> TraerTodoslosPedidios(){
 		ObjectMapper mapper = new ObjectMapper();

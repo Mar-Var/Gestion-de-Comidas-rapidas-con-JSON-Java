@@ -14,12 +14,20 @@ import org.json.simple.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import co.edu.uptc.logica.modelo.Producto;
-
+/**
+ * Esta clase gestiona la persistencia de los datos de los {@link Producto} contenidos en el archivo JSON
+ * @author Marcos Esteban Vargas Avella
+ *
+ */
 public class ProductoPersistence {
 	private String ruta="Productos.json";
 	File file = new File(ruta);
 	ArrayList<Producto> products;
-	
+	/**
+	 * metodo que permite crear un archivo JSON en caso de que no exista la ruta que se ingresó.
+	 * @return
+	 * @throws IOException
+	 */
 	public boolean fileExist() throws IOException {
 		if(!file.exists()) {
 			file.createNewFile();
@@ -27,6 +35,11 @@ public class ProductoPersistence {
 		
 		return false;
 	}
+	/**
+	 * Permite Sobreescribir el archivo JSON con la informacion suministrada por un {@link ArrayList} de tipo {@link Producto}
+	 * @param contenido Parametro de tipo {@link ArrayList} de tipo {@link Producto} que va a ser añadida al archivo JSON
+	 * @return Retorna un valor tipo boolean, true si puede sobreescribir el archivo correctamente, de lo contrario lanza false
+	 */
 	public boolean SobreEscribirArchivoProducto(ArrayList<Producto> contenido){
 		
 		try {
@@ -50,6 +63,11 @@ public class ProductoPersistence {
 		}
 
 	}
+	/**
+	 * metodo que permite agregar un nuevo registro de {@link Producto} dentro del archivo JSON
+	 * @param productoAgregar parametro de tipo {@link Producto} que representa el nuevo producto que se va a agregar.
+	 * @return Retorna un dato tipo booleano, true si puede agregar el producto, de lo contrario manda false
+	 */
 	public boolean AgregarUnNuevoProducto(Producto productoAgregar) {
 		try {
 			fileExist();
@@ -82,6 +100,13 @@ public class ProductoPersistence {
 		}
 		
 	}
+	/**
+	 * metodo que sirve para buscar un registro dentro de un archivo JSON y modificarlo
+	 * @param nombreProducto Representa un valor de tipo String del nombre el producto que se quiere actualizar
+	 * @param price Representa un valor de tipo dluble que representa el nuevo precio de el producto
+	 * @return Retorna un dato de tipo boolean, true si puede actualizar el archivo y el registro con exito, false en caso de que no
+	 * @throws IOException
+	 */
 	public boolean actualizarProducto(String nombreProducto, double price) throws IOException {
 		JSONArray content = new JSONArray();
 		products =TraerTodosloProductos();
@@ -110,6 +135,11 @@ public class ProductoPersistence {
 		
 		return false;
 	}
+	/**
+	 * metodo que permite buscar el nombre de un producto dentro del archivo JSON y si lo encuentra lo elimina
+	 * @param nombreProducto Parametro de tipo String que representa el nombre del producto a eliminar.
+	 * @return Retorna un valor de tipo boolean, true si se pudo eliminar el producto y false si no se logró.
+	 */
 	public boolean EliminarProducto (String nombreProducto) {
 		products=TraerTodosloProductos();
 		for (int i = 0; i < products.size(); i++) {
@@ -133,6 +163,10 @@ public class ProductoPersistence {
 
 		return false;
 	}
+	/**
+	 * Metodo que permite trear toda la informacion del archivo Json a un {@link ArrayList} de tipo {@link Producto}
+	 * @return Retorna un dato de tipo {@link ArrayList} de tipo {@link Producto} con la informacion contenida en el Archivo JSON
+	 */
 	public ArrayList<Producto> TraerTodosloProductos(){
 		ObjectMapper mapper = new ObjectMapper();
 		products= new ArrayList();
