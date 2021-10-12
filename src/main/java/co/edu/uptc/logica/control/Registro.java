@@ -39,6 +39,27 @@ public class Registro {
 		this.pedidoPersistence= new PedidoPersistence();
 		this.domiciliarioPersistence=new DomiciliariosPersistence();
 	}
+	
+	public Producto encontrarProducto(String nombre) {
+		
+		return productoPersistence
+				.TraerTodosloProductos()
+				.stream()
+				.filter(productoAux->productoAux.getName().equals(nombre))
+				.findFirst()
+				.map(productoAux->productoAux)
+				.orElse(null);
+	}
+	
+	public Domiciliario encontrarDomiciliario(long id) {
+		return domiciliarioPersistence
+				.TraerTodoslosdomiciliarios()
+				.stream()
+				.filter(domiciliarioAux->domiciliarioAux.getIdentification()==id)
+				.findFirst()
+				.map(domiciliarioAux->domiciliarioAux)
+				.orElse(null);
+	}
 	/**
 	 * Metodo que agrega un objeto de tipo {@link Producto} dentro de un archivo JSON
 	 * @param name El parametro name es un dato de tipo String y representa el nombre de un nuevo producto
@@ -161,24 +182,39 @@ public class Registro {
 	
 	/**
 	 * Metodo que permite obetener un ArrayList de tipo arreglo de estrings donded se guardara la informacion de el nombre 
-	 	de el Domiciliario y el total que se le debe pagar mas bonos
+	 	de el Domiciliario y el total que se le debe pagar mas bonos	
+	 * @param date Indica una fecha en la que se desea buscar la liquidacion del Domiciliario
 	 * @return Retorna un dato de tipo {@link ArrayList} con la informacion de Domiciliarios y su liquidacion de acuerdo 
 	 	con las ventas realizadas y bono por ser el mayor vendedor.
 	 */
-	public ArrayList<String[]> obtenerLiquidaciones(){
+	public ArrayList<String[]> obtenerLiquidaciones(DateUses date){
 		pedidos= pedidoPersistence.TraerTodoslosPedidios();
 		domiciliario= domiciliarioPersistence.TraerTodoslosdomiciliarios();
 		productos=productoPersistence.TraerTodosloProductos();
 		ArrayList<String[]> liquidar = new ArrayList<>();
 		mayor=0;
+		
+		ArrayList<Pedido> pedidosEnRango = new ArrayList<Pedido>();
+		for (Pedido pedido : pedidos) {
+			if(pedido.getDate().getYear()==date.getYear() && pedido.getDate().getMonth()==date.getMonth()
+					&& pedido.getDate().getDay()==date.getDay()) {
+				pedidosEnRango.add(pedido);
+			}
+			else {
+				return null;
+				
+			}
+		}		
+		
+		
 
 		for (int i = 0; i < domiciliario.size(); i++) {
 			double aPagar=0;
-			for (int j = 0; j < pedidos.size(); j++) {
+			for (int j = 0; j < pedidosEnRango.size(); j++) {
 				
-				if(pedidos.get(j).getDomiciliarioid().equals(String.valueOf(domiciliario.get(i).getIdentification()))) {
+				if(pedidosEnRango.get(j).getDomiciliarioid().equals(String.valueOf(domiciliario.get(i).getIdentification()))) {
 
-					aPagar+=pedidos.get(j).getCost()*0.2;
+					aPagar+=pedidosEnRango.get(j).getCost()*0.2;
 				}
 			}
 			String[] personalIquidar= {domiciliario.get(i).getName(),domiciliario.get(i).getLastName()

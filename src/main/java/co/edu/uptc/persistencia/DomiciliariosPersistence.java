@@ -33,7 +33,7 @@ public class DomiciliariosPersistence {
 	 /**
 	  * Metodo que permite verificar si un archiov existe y si no existe lo crea
 	  * @return Retorna un dato tipo booleano, true si crea el archivo y de lo contrario retorna false
-	  * @throws IOException
+	  * @throws IOException lanza una excepcion
 	  */
 	public boolean fileExist() throws IOException {
 		if(!file.exists()) {
@@ -158,7 +158,7 @@ public class DomiciliariosPersistence {
 	 * @param cel parametro tipo String que representa el nuevo numero de celular de el {@link Domiciliario}
 	 * @param direction Parametro de tipo String que prepresenta el nuevo domicilio de el {@link Domiciliario}
 	 * @return Retorna un dato de tipo boolean, true si se puede actualizar y false si hubo algun problema con el proceso.
-	 * @throws IOException
+	 * @throws IOException Lanza Una excepcion
 	 */
 	public boolean actualizarDomiciliario(String name, String lastName, long identification, DateUses birthday,String cel,String direction) throws IOException {
 

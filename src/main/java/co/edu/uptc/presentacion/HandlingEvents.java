@@ -72,6 +72,8 @@ public class HandlingEvents implements ActionListener,MouseListener {
 		
 		case ADD_DOMICILIARIO:
 			
+
+			
 			if(mainWindow.getTxtnombreDomiciliario().getText().equals("")||
 					mainWindow.getTxtApellidosDomiciliario().getText().equals("")||
 					mainWindow.getTxtCedula().getText().equals("")||
@@ -81,6 +83,11 @@ public class HandlingEvents implements ActionListener,MouseListener {
 				JOptionPane.showMessageDialog(null, "Hay campos vacios");
 				break;
 				
+			}
+			
+			if(r.encontrarDomiciliario(Long.parseLong(mainWindow.getTxtCedula().getText()))!=null){
+				JOptionPane.showMessageDialog(null, "El usuario ya existe");
+				break;
 			}
 			
 			Date fecha=mainWindow.getDcFechaNacimiento().getDate();
@@ -120,6 +127,10 @@ public class HandlingEvents implements ActionListener,MouseListener {
 				
 			}
 			
+			if(r.encontrarDomiciliario(Long.parseLong(mainWindow.getTxtCedula().getText()))== null){
+				JOptionPane.showMessageDialog(null, "");
+			}
+			
 			try {
 				
 				Date fechanacimiento=mainWindow.getDcFechaNacimiento().getDate();
@@ -154,12 +165,18 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			}
 			ProductosSolicitados productos = new ProductosSolicitados(mainWindow.getCbProductos().getSelectedItem().toString()
 					, Integer.parseInt(mainWindow.getTxtCantidadProductos().getText()));
+
 			this.ps.add(productos);
 
 			llenarListaRroductosPedidos(mainWindow.getDfltProductospedido(), ps);
 
 			break;
 		case ADD_PRODUCTO:
+			if(r.encontrarProducto(mainWindow.getTxtNombreProducto().getText())!=null) {
+				JOptionPane.showMessageDialog(null, "Este producto ya esta registrado.");
+				break;
+			}
+			
 			if(mainWindow.getTxtNombreProducto().getText().equals("")||
 			mainWindow.getTxtPrecioProducto().getText().equals("")
 			) {
@@ -217,8 +234,7 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			if(mainWindow.getTxtNombreCliente().getText().equals("")||
 			mainWindow.getTxtApellidoCliente().getText().equals("")||
 			mainWindow.getTxtTelefonoCliente().getText().equals("")||
-			mainWindow.getTxtDireccioncliente().getText().equals("")||
-			mainWindow.getTxtCantidadProductos().getText().equals("")
+			mainWindow.getTxtDireccioncliente().getText().equals("")
 			) {
 				JOptionPane.showMessageDialog(null, "Hay campos vacios.");
 				break;
@@ -232,6 +248,11 @@ public class HandlingEvents implements ActionListener,MouseListener {
 				String[] datos = String.valueOf(mainWindow.getDfltProductospedido().getElementAt(i)).split(":");
 				ProductosSolicitados p= new ProductosSolicitados(datos[0],Integer.parseInt(datos[1]));
 				pro.add(p);
+			}
+			if(pro.size()==0 || pro==null) {
+				JOptionPane.showMessageDialog(null, "Debe ingresar por lo menos un producto");
+				break;
+				
 			}
 			
 			if(	!r.agregarPedido(mainWindow.getTxtNombreCliente().getText()
@@ -258,7 +279,11 @@ public class HandlingEvents implements ActionListener,MouseListener {
 			
 			break;
 		case GET_LIQUIDACION:
-			llenarTablaLiquidaciones(mainWindow.getDftblLiquidaciones(), r.obtenerLiquidaciones());
+			Date fechaliquidacion=mainWindow.getDcFechaVentas().getDate();
+			SimpleDateFormat formatL = new SimpleDateFormat("dd/MM/yyyy");
+			String[] fechaPartidasL=formatL.format(fechaliquidacion).split("/");
+			DateUses datedateL = new DateUses(Integer.parseInt(fechaPartidasL[2]),Integer.parseInt(fechaPartidasL[1]), Integer.parseInt(fechaPartidasL[0]));
+			llenarTablaLiquidaciones(mainWindow.getDftblLiquidaciones(), r.obtenerLiquidaciones(datedateL));
 			break;
 		case GET_PREFERENCIAS:
 			mainWindow.getTxtProductoPreferente().setText(r.mostrarPreferenciaproducto());
@@ -323,7 +348,7 @@ public class HandlingEvents implements ActionListener,MouseListener {
 	}
 	/**
 	 * metodo que permite añadir datos al {@link JComboBox} de Domiciliarios
-	 * @param cbproductos parametro tipo {@link JComboBox} a añadir items a Domiciliario
+	 * @param cbDomiciliarios parametro tipo {@link JComboBox} a añadir items a Domiciliario
 	 */
 	public void addCompenentsComboBoxDomiciliarios(JComboBox cbDomiciliarios) {
 		DomiciliariosPersistence dp = new DomiciliariosPersistence();
@@ -360,11 +385,19 @@ public class HandlingEvents implements ActionListener,MouseListener {
 					,domiciliario.getAdress()});
 		}
 	}
+	/**
+	 * metodo para llenar la tabla de liquidaciones con informacion traida desde un {@link ArrayList}
+	 * @param dftbl Modelo de tabla a la cual se le quieren asignar los valores
+	 * @param datos Es el arreglo de datos que va a ser introducido a la tabla
+	 */
 	public void llenarTablaLiquidaciones(DefaultTableModel dftbl,ArrayList<String[]> datos) {
 		dftbl.setRowCount(0);
-		for (String[] strings : datos) {
-			dftbl.addRow(new Object[] {strings[0],strings[2]});
+		if(datos!=null) {
+			for (String[] strings : datos) {
+				dftbl.addRow(new Object[] {strings[0],strings[2]});
+			}
 		}
+
 	}
 	/**
 	 * Metodo que permite llenar la tabla de Domiciliario con informacion suminsitrada por un {@link ArrayList} de tipo {@link Preferencias}
@@ -395,7 +428,7 @@ public class HandlingEvents implements ActionListener,MouseListener {
 	
 	/**
 	 * Metodo que permite llenar la tabla de Pedidos con informacion segun la fecha
-	 * @param dftbl Parametro tipo {@link DefaultTableModel} el cual va a ser modificado
+	 * @param dtbl Parametro tipo {@link DefaultTableModel} el cual va a ser modificado
 	 * @param du Parametro tipo {@link DateUses} de tipo {@link Preferencias} que suministrara la informacion a la tabla
 	 */
 	public void llenarTablaVentasporFecha(DefaultTableModel dtbl,DateUses du) {

@@ -145,12 +145,17 @@ public class PedidoPersistence {
 			nuevoProducto.put("direction", pedidoAgregar.getDirection());
 			nuevoProducto.put("domiciliarioid", pedidoAgregar.getDomiciliarioid());
 			JSONArray pedidosCliente = new JSONArray();
-			JSONObject producto = new JSONObject();
+			
+			System.out.println("Durante");
 			for (int j = 0; j < pedidoAgregar.getOrderedProducts().size(); j++) {
+				JSONObject producto = new JSONObject();
 				producto.put("name", pedidoAgregar.getOrderedProducts().get(j).getName());
 				producto.put("amount", pedidoAgregar.getOrderedProducts().get(j).getAmount());
 				pedidosCliente.add(producto);
 			}
+			System.out.println(pedidosCliente.toJSONString());
+			System.out.println("Final");
+			
 			
 			
 			nuevoProducto.put("orderedProducts",pedidosCliente);

@@ -13,7 +13,7 @@ public class Archivo {
 	public boolean SobreescribirArchivo(String ruta, String texto) {
 
 		// Ruta relativas (Recursos/)
-		// Ruta absoluta (C:\Users\CamiloBD\eclipse-workspace\Vacunacion\Recursos)
+		// Ruta absoluta (C:\Users\BD\eclipse-workspace\Vacunacion\Recursos)
 
 		File archivo = new File(ruta);
 		boolean existe = false;
