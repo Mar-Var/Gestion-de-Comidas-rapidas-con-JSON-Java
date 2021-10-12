@@ -32,8 +32,8 @@ public class PedidoPersistence {
 	}
 	/**
 	 * metodo que sirve para saber si un archio existe y en caso de noe xistir lo crea
-	 * @return
-	 * @throws IOException
+	 * @return Un valor Boolean
+	 * @throws IOException lanza Excepcion
 	 */
 	public boolean fileExist() throws IOException {
 		if(!file.exists()) {
@@ -47,7 +47,7 @@ public class PedidoPersistence {
 	 	{@link Pedido}
 	 * @param contenido parametro de tipo {@link ArrayList} de tipo {@link Pedido} con la informacion a agregar al Archivo JSON
 	 * @return Retorna un dato boolean, true si se pudo sobreescribir con exito, de lo contrario arroja false;
-	 * @throws IOException
+	 * @throws IOException Lanza Excepcion
 	 */
 	public boolean SobreEscribirArchivoProducto(ArrayList<Pedido> contenido) throws IOException{
 		
@@ -95,7 +95,7 @@ public class PedidoPersistence {
 	/**
 	 * metodo que permite agregar un nuevo registro al archivo JSON con la informacion de un dato tipo {@link Pedido}
 	 * @param pedidoAgregar Parametro de tipo {@link Pedido} Con la informacion para crear el nuevo registro
-	 * @return
+	 * @return Retorna un dato de tipo boolean, True si pued, false si no
 	 */
 	public boolean AgregarUnNuevoPedido(Pedido pedidoAgregar) {
 		try {

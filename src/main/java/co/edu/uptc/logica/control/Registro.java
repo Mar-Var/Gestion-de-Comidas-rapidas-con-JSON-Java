@@ -55,7 +55,7 @@ public class Registro {
 	 * @param name Parametro de tipo String que representa el nombre del {@link Producto} que se quiere actualizar
 	 * @param price Parametro de tipo double que representa el nuevo precio que se le quiere asignar al {@link Producto} 
 	 * @return Retorna un dato booleano, true si se puede actualizar el campo en el Archivo JSON , false de lo contrario.
-	 * @throws IOException
+	 * @throws IOException lanza Excepciones
 	 */
 	
 	public boolean actualizarProducto(String name , double price) throws IOException {
@@ -145,7 +145,7 @@ public class Registro {
 	 * @param cel paramatro de tipo String que representa el nuevo numero de contacto del Domicialiario
 	 * @param direction Parametro de tipo String que prepresenta la nueva direccionde domicilio del Domiciliario
 	 * @return Retorna un valor de tipo booleano, true si fue agregado con exito, de lo contrario retornara false
-	 * @throws IOException
+	 * @throws IOException Lanza Excepcion
 	 */
 	public boolean actualizarDomiciliario(String name, String lastName, int identification, DateUses birthday, String cel,String direction) throws IOException {
 		return domiciliarioPersistence.actualizarDomiciliario(name, lastName, identification, birthday,cel,direction);
@@ -162,7 +162,7 @@ public class Registro {
 	/**
 	 * Metodo que permite obetener un ArrayList de tipo arreglo de estrings donded se guardara la informacion de el nombre 
 	 	de el Domiciliario y el total que se le debe pagar mas bonos
-	 * @return Retorna un dato de tipo {@link ArrayList<String[]>} con la informacion de Domiciliarios y su liquidacion de acuerdo 
+	 * @return Retorna un dato de tipo {@link ArrayList} con la informacion de Domiciliarios y su liquidacion de acuerdo 
 	 	con las ventas realizadas y bono por ser el mayor vendedor.
 	 */
 	public ArrayList<String[]> obtenerLiquidaciones(){
@@ -196,8 +196,8 @@ public class Registro {
 		}
 		for (int i = 0; i < liquidar.size(); i++) {
 			if(Double.parseDouble(liquidar.get(i)[2]) == mayor ) {
-				double añadirbono=Double.parseDouble(liquidar.get(i)[2])+20000;
-				liquidar.get(i)[2]=String.valueOf(añadirbono);
+				double anadirbono=Double.parseDouble(liquidar.get(i)[2])+20000;
+				liquidar.get(i)[2]=String.valueOf(anadirbono);
 			}
 			
 		}

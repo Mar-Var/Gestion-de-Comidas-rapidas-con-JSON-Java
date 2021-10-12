@@ -25,8 +25,8 @@ public class ProductoPersistence {
 	ArrayList<Producto> products;
 	/**
 	 * metodo que permite crear un archivo JSON en caso de que no exista la ruta que se ingresó.
-	 * @return
-	 * @throws IOException
+	 * @return Un valor boolean
+	 * @throws IOException Lanza Excepcion
 	 */
 	public boolean fileExist() throws IOException {
 		if(!file.exists()) {
@@ -105,7 +105,7 @@ public class ProductoPersistence {
 	 * @param nombreProducto Representa un valor de tipo String del nombre el producto que se quiere actualizar
 	 * @param price Representa un valor de tipo dluble que representa el nuevo precio de el producto
 	 * @return Retorna un dato de tipo boolean, true si puede actualizar el archivo y el registro con exito, false en caso de que no
-	 * @throws IOException
+	 * @throws IOException Lanza Excepcion
 	 */
 	public boolean actualizarProducto(String nombreProducto, double price) throws IOException {
 		JSONArray content = new JSONArray();

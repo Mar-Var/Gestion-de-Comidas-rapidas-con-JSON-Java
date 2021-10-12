@@ -20,7 +20,7 @@ public class Preferencias {
 		this.cantidad = cantidad;
 	}
 	
-	public void añadirCantidad() {
+	public void anadirCantidad() {
 		this.cantidad+=1;
 	}
 	public String getNombre() {
